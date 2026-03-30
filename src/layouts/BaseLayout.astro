@@ -21,9 +21,15 @@ const {
     <title>{title}</title>
     <meta name="description" content={description} />
 
-    <!-- Preconnect: percepat load Google Fonts -->
+    <!-- Preconnect Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Load font — di head bukan @import agar tidak double-block -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    />
   </head>
   <body>
     <slot />
