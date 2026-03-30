@@ -1,5 +1,6 @@
 ---
 import Navbar from "../../components/Navbar.astro";
+import Footer from "../../components/Footer.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import {
   pulsaProviders,
@@ -10,10 +11,6 @@ import {
 
 const waNumber = "6289501450667";
 
-// Pisahkan topupProducts menjadi e-wallet dan token PLN berdasarkan name
-// E-wallet: gopay, ovo, spay, dana, linkaja, gojekdriv, grabdriv, maximdriv
-// Token: plntoken
-// E-wallet murni: gopay, ovo, spay, dana, linkaja, gojekdriv, grabdriv, maximdriv
 const EWALLET_NAMES = new Set([
   "gopay",
   "ovo",
@@ -64,10 +61,12 @@ const configData = JSON.stringify({
 });
 ---
 
-<BaseLayout>
+<BaseLayout
+  description="Cek harga pulsa, paket data, e-wallet, token PLN, dan voucher game terbaru. Harga terjangkau, proses cepat di Oltpay."
+>
   <Navbar />
 
-  <!-- ══ SVG SYMBOLS ══ -->
+  <!-- ══ SVG SPRITE — satu blok, nol duplikasi ══ -->
   <svg
     aria-hidden="true"
     style="display:none"
@@ -132,7 +131,8 @@ const configData = JSON.stringify({
       stroke-linecap="round"
       stroke-linejoin="round"
     >
-      <circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path>
+      <circle cx="12" cy="12" r="10"></circle>
+      <path d="M12 6v6l4 2"></path>
     </symbol>
     <symbol
       id="icon-alert"
@@ -155,6 +155,29 @@ const configData = JSON.stringify({
         d="M11.99 0C5.374 0 0 5.373 0 11.988c0 2.114.549 4.099 1.504 5.83L0 24l6.335-1.652A11.939 11.939 0 0 0 11.99 24C18.626 24 24 18.626 24 12.012 24 5.373 18.626 0 11.99 0zm0 21.785a9.796 9.796 0 0 1-4.994-1.365l-.357-.212-3.758.98.999-3.647-.233-.374A9.722 9.722 0 0 1 2.203 12c0-5.398 4.394-9.791 9.787-9.791 5.394 0 9.788 4.393 9.788 9.791 0 5.398-4.394 9.785-9.788 9.785z"
       ></path>
     </symbol>
+    <symbol
+      id="icon-chevron-down"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <polyline points="6 9 12 15 18 9"></polyline>
+    </symbol>
+    <symbol
+      id="icon-arrow-right"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+      <polyline points="12 5 19 12 12 19"></polyline>
+    </symbol>
   </svg>
 
   <div class="page-wrapper">
@@ -162,8 +185,8 @@ const configData = JSON.stringify({
       <!-- ══ HEADER SECTION ══ -->
       <section class="input-section">
         <div class="page-title-row">
-          <div class="page-title-icon">
-            <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"
+          <div class="page-title-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="24" height="24"
               ><use href="#icon-tag"></use></svg
             >
           </div>
@@ -222,10 +245,12 @@ const configData = JSON.stringify({
               width="16"
               height="16"
               aria-hidden="true"
-              class="search-icon"><use href="#icon-search"></use></svg
+              class="search-icon"
             >
+              <use href="#icon-search"></use>
+            </svg>
             <input
-              type="text"
+              type="search"
               id="search-input"
               placeholder="Cari nominal, nama paket, atau kode..."
               autocomplete="off"
@@ -236,9 +261,14 @@ const configData = JSON.stringify({
               id="search-clear"
               aria-label="Hapus pencarian"
             >
-              <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"
-                ><use href="#icon-close"></use></svg
+              <svg
+                viewBox="0 0 24 24"
+                width="12"
+                height="12"
+                aria-hidden="true"
               >
+                <use href="#icon-close"></use>
+              </svg>
             </button>
           </div>
           <p class="search-hint" id="search-hint"></p>
@@ -247,7 +277,6 @@ const configData = JSON.stringify({
 
       <!-- ══ PRODUCTS SECTION ══ -->
       <section class="products-section" id="products-section">
-        <!-- Custom dropdown selector -->
         <div class="selector-row hidden" id="provider-selector">
           <p class="selector-label" id="provider-selector-label">Provider</p>
           <div
@@ -263,23 +292,18 @@ const configData = JSON.stringify({
                 viewBox="0 0 24 24"
                 width="16"
                 height="16"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
                 aria-hidden="true"
-                ><polyline points="6 9 12 15 18 9"></polyline></svg
               >
+                <use href="#icon-chevron-down"></use>
+              </svg>
             </div>
             <div class="cust-dropdown__menu" id="dd-menu"></div>
           </div>
         </div>
 
-        <!-- Empty / loading / no-result states -->
         <div class="state-wrap" id="state-empty">
-          <div class="state-icon">
-            <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"
+          <div class="state-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="26" height="26"
               ><use href="#icon-tag"></use></svg
             >
           </div>
@@ -288,8 +312,8 @@ const configData = JSON.stringify({
         </div>
 
         <div class="state-wrap hidden" id="state-select-provider">
-          <div class="state-icon">
-            <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"
+          <div class="state-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="26" height="26"
               ><use href="#icon-phone"></use></svg
             >
           </div>
@@ -300,8 +324,8 @@ const configData = JSON.stringify({
         </div>
 
         <div class="state-wrap hidden" id="state-no-result">
-          <div class="state-icon state-icon--warn">
-            <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"
+          <div class="state-icon state-icon--warn" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="26" height="26"
               ><use href="#icon-alert"></use></svg
             >
           </div>
@@ -311,7 +335,6 @@ const configData = JSON.stringify({
           </p>
         </div>
 
-        <!-- Products list -->
         <div class="products-wrap hidden" id="products-wrap">
           <div class="products-header">
             <div class="products-header-left">
@@ -328,7 +351,7 @@ const configData = JSON.stringify({
     </main>
   </div>
 
-  <!-- ══ MINI MODAL — "Mau beli produk ini?" ══ -->
+  <!-- ══ MINI MODAL ══ -->
   <div class="modal-overlay hidden" id="modal-overlay">
     <div
       class="mini-modal"
@@ -338,13 +361,11 @@ const configData = JSON.stringify({
       aria-labelledby="modal-title"
     >
       <button class="mini-modal__close" id="modal-close" aria-label="Tutup">
-        <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"
-          ><use href="#icon-close"></use></svg
-        >
+        <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true">
+          <use href="#icon-close"></use>
+        </svg>
       </button>
-
       <p class="mini-modal__eyebrow">Mau beli produk ini?</p>
-
       <div class="mini-modal__product">
         <div class="mini-modal__dot" id="modal-provider-dot"></div>
         <div class="mini-modal__info">
@@ -353,36 +374,22 @@ const configData = JSON.stringify({
         </div>
         <div class="mini-modal__price" id="m-price">—</div>
       </div>
-
       <div class="mini-modal__code-row">
         <span class="mini-modal__code-label">Kode Produk</span>
         <span class="mini-modal__code" id="m-code">—</span>
       </div>
-
       <div class="mini-modal__actions">
         <button class="btn-cancel" id="btn-cancel">Tutup</button>
         <a class="btn-order" id="btn-order" href="#">
           Lihat &amp; Order
-          <svg
-            viewBox="0 0 24 24"
-            width="14"
-            height="14"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-            <polyline points="12 5 19 12 12 19"></polyline>
+          <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+            <use href="#icon-arrow-right"></use>
           </svg>
         </a>
       </div>
     </div>
   </div>
 
-  <!-- Config data -->
   <script id="config" type="application/json" set:html={configData} />
 
   <!-- ══ FLOATING WA BUTTON ══ -->
@@ -392,22 +399,24 @@ const configData = JSON.stringify({
       target="_blank"
       rel="noopener noreferrer"
       class="wa-fab"
-      id="wa-fab"
       aria-label="Chat WhatsApp Admin"
     >
       <svg
         class="wa-fab__icon"
         viewBox="0 0 24 24"
         fill="currentColor"
-        aria-hidden="true"><use href="#icon-wa"></use></svg
+        aria-hidden="true"
       >
+        <use href="#icon-wa"></use>
+      </svg>
       <span class="wa-fab__label">Butuh bantuan?</span>
     </a>
   </div>
+
+  <Footer />
 </BaseLayout>
 
 <style>
-  /* ══ LAYOUT ══ */
   main {
     max-width: var(--content-max);
     margin: 0 auto;
@@ -415,15 +424,9 @@ const configData = JSON.stringify({
     display: flex;
     flex-direction: column;
     gap: 16px;
+    contain: layout style;
   }
 
-  @media (max-width: 640px) {
-    main {
-      padding: 20px 12px 80px;
-    }
-  }
-
-  /* ══ INPUT SECTION ══ */
   .input-section {
     background: var(--color-bg);
     border-radius: 20px;
@@ -438,7 +441,6 @@ const configData = JSON.stringify({
     align-items: center;
     gap: 14px;
   }
-
   .page-title-icon {
     width: 48px;
     height: 48px;
@@ -452,7 +454,6 @@ const configData = JSON.stringify({
     height: 24px;
     color: var(--color-text);
   }
-
   .page-title {
     font-size: 1.25rem;
     font-weight: 800;
@@ -466,7 +467,6 @@ const configData = JSON.stringify({
     margin: 0;
   }
 
-  /* ══ CATEGORY TABS ══ */
   .cat-tab-bar {
     display: flex;
     gap: 0;
@@ -504,7 +504,6 @@ const configData = JSON.stringify({
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   }
 
-  /* ══ SEARCH ══ */
   .search-wrap {
     display: flex;
     flex-direction: column;
@@ -525,12 +524,10 @@ const configData = JSON.stringify({
   .search-input-wrap:focus-within {
     border-color: var(--color-text);
   }
-
   .search-icon {
     color: var(--color-muted);
     flex-shrink: 0;
   }
-
   .search-input-wrap input {
     flex: 1;
     border: none;
@@ -539,6 +536,11 @@ const configData = JSON.stringify({
     font-weight: 500;
     color: var(--color-text);
     background: transparent;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .search-input-wrap input::-webkit-search-cancel-button {
+    display: none;
   }
   .search-input-wrap input::placeholder {
     color: #c4c4c4;
@@ -562,14 +564,12 @@ const configData = JSON.stringify({
   .search-clear:hover {
     background: var(--color-border);
   }
-
   .search-hint {
     font-size: 12px;
     color: var(--color-muted);
     margin: 0;
   }
 
-  /* ══ PRODUCTS SECTION ══ */
   .products-section {
     background: var(--color-bg);
     border-radius: 20px;
@@ -579,16 +579,9 @@ const configData = JSON.stringify({
     flex-direction: column;
   }
 
-  /* ══ CUSTOM SELECTOR ══ */
   .selector-row {
     padding: 20px 28px 0;
   }
-  @media (max-width: 600px) {
-    .selector-row {
-      padding: 16px 16px 0;
-    }
-  }
-
   .selector-label {
     font-size: 11px;
     font-weight: 700;
@@ -598,13 +591,11 @@ const configData = JSON.stringify({
     margin: 0 0 8px;
   }
 
-  /* ── Custom dropdown ── */
   .cust-dropdown {
     position: relative;
     width: 100%;
     user-select: none;
   }
-
   .cust-dropdown__trigger {
     display: flex;
     align-items: center;
@@ -625,7 +616,6 @@ const configData = JSON.stringify({
     background: #e8e8e8;
     border-radius: 12px 12px 0 0;
   }
-
   .cust-dropdown__value {
     font-size: 14px;
     font-weight: 600;
@@ -639,16 +629,15 @@ const configData = JSON.stringify({
   .cust-dropdown.selected .cust-dropdown__value {
     color: var(--color-text);
   }
-
   .cust-dropdown__chevron {
     flex-shrink: 0;
     color: var(--color-muted);
+    will-change: transform;
     transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1);
   }
   .cust-dropdown.open .cust-dropdown__chevron {
     transform: rotate(180deg);
   }
-
   .cust-dropdown__menu {
     position: absolute;
     left: 0;
@@ -656,10 +645,10 @@ const configData = JSON.stringify({
     top: 100%;
     background: #f0f0f0;
     border-radius: 0 0 12px 12px;
-    overflow: hidden;
     z-index: 100;
     max-height: 0;
     overflow-y: auto;
+    overflow-x: hidden;
     transition: max-height 0.14s cubic-bezier(0.4, 0, 0.2, 1);
     scrollbar-width: none;
   }
@@ -703,7 +692,6 @@ const configData = JSON.stringify({
     opacity: 0;
   }
 
-  /* ══ STATE WRAPPERS ══ */
   .state-wrap {
     flex: 1;
     display: flex;
@@ -744,12 +732,10 @@ const configData = JSON.stringify({
     line-height: 1.5;
   }
 
-  /* ══ PRODUCTS WRAP ══ */
   .products-wrap {
     width: 100%;
     padding: 24px 28px 32px;
   }
-
   .products-header {
     display: flex;
     align-items: center;
@@ -763,7 +749,6 @@ const configData = JSON.stringify({
     align-items: center;
     gap: 14px;
   }
-
   .provider-logo {
     width: 40px;
     height: 40px;
@@ -784,7 +769,6 @@ const configData = JSON.stringify({
     height: 100%;
     object-fit: contain;
   }
-
   .products-title {
     font-size: 15px;
     font-weight: 700;
@@ -797,7 +781,6 @@ const configData = JSON.stringify({
     margin: 0;
   }
 
-  /* ══ NOMINALS GRID ══ */
   :global(.nominals-grid) {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -836,7 +819,6 @@ const configData = JSON.stringify({
     background: var(--color-border);
   }
 
-  /* ══ NOMINAL BUTTON (injected via JS) ══ */
   :global(.nominal-btn) {
     background: #f0f0f0;
     border: 1.5px solid var(--color-border);
@@ -860,7 +842,7 @@ const configData = JSON.stringify({
     border-color: var(--color-text);
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
     transform: translateY(-1px);
-    background: #ffffff;
+    background: #fff;
   }
   :global(.nominal-btn:active) {
     transform: translateY(0);
@@ -953,7 +935,6 @@ const configData = JSON.stringify({
     transform: scale(1);
   }
 
-  /* ══ MINI MODAL ══ */
   .modal-overlay {
     position: fixed;
     inset: 0;
@@ -1010,7 +991,6 @@ const configData = JSON.stringify({
   .mini-modal__close:hover {
     background: #f0f0f0;
   }
-
   .mini-modal__eyebrow {
     font-size: 11px;
     font-weight: 700;
@@ -1019,7 +999,6 @@ const configData = JSON.stringify({
     letter-spacing: 0.5px;
     margin: 0;
   }
-
   .mini-modal__product {
     display: flex;
     align-items: center;
@@ -1029,7 +1008,6 @@ const configData = JSON.stringify({
     border-radius: 14px;
     padding: 14px 16px;
   }
-
   .mini-modal__dot {
     width: 12px;
     height: 12px;
@@ -1038,7 +1016,6 @@ const configData = JSON.stringify({
     flex-shrink: 0;
     transition: background 0.3s;
   }
-
   .mini-modal__info {
     flex: 1;
     min-width: 0;
@@ -1070,7 +1047,6 @@ const configData = JSON.stringify({
     flex-shrink: 0;
     text-align: right;
   }
-
   .mini-modal__code-row {
     display: flex;
     align-items: center;
@@ -1094,7 +1070,6 @@ const configData = JSON.stringify({
     border-radius: 6px;
     border: 1px solid var(--color-border);
   }
-
   .mini-modal__actions {
     display: flex;
     gap: 8px;
@@ -1149,7 +1124,6 @@ const configData = JSON.stringify({
     transform: translateY(0);
   }
 
-  /* ══ SEARCH DISABLED STATE ══ */
   .search-input-wrap.disabled {
     opacity: 0.5;
     pointer-events: none;
@@ -1159,16 +1133,15 @@ const configData = JSON.stringify({
     font-style: italic;
   }
 
-  /* ══ FLOATING WA BUTTON ══ */
   .wa-fab-wrap {
     position: fixed;
     bottom: 28px;
     right: 24px;
     z-index: 900;
     animation: fabIn 0.5s 1.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+    will-change: transform, opacity;
     touch-action: none;
     user-select: none;
-    will-change: transform;
   }
   @keyframes fabIn {
     from {
@@ -1180,6 +1153,7 @@ const configData = JSON.stringify({
       transform: translateY(0) scale(1);
     }
   }
+
   .wa-fab {
     display: flex;
     align-items: center;
@@ -1217,10 +1191,10 @@ const configData = JSON.stringify({
     max-width: 160px;
     overflow: hidden;
     opacity: 1;
+    line-height: 1;
     transition:
       max-width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
       opacity 0.2s ease;
-    line-height: 1;
   }
   .wa-fab-wrap.collapsed .wa-fab {
     border-radius: 50%;
@@ -1231,6 +1205,7 @@ const configData = JSON.stringify({
     max-width: 0;
     opacity: 0;
   }
+
   @media (max-width: 480px) {
     .wa-fab-wrap {
       bottom: 20px;
@@ -1239,17 +1214,21 @@ const configData = JSON.stringify({
     .wa-fab {
       width: 52px;
       height: 52px;
-      padding: 0 !important;
-      border-radius: 50% !important;
+      padding: 0;
+      border-radius: 50%;
       justify-content: center;
-      gap: 0 !important;
+      gap: 0;
     }
     .wa-fab__label {
-      display: none !important;
+      display: none;
     }
   }
 
-  /* ══ RESPONSIVE ══ */
+  @media (max-width: 640px) {
+    main {
+      padding: 20px 12px 80px;
+    }
+  }
   @media (max-width: 600px) {
     main {
       padding: 28px 16px 80px;
@@ -1262,11 +1241,8 @@ const configData = JSON.stringify({
     .products-wrap {
       padding: 20px 16px 24px;
     }
-    .provider-selector {
-      padding: 20px 16px 0;
-    }
-    .subcat-bar {
-      padding: 12px 16px 0;
+    .selector-row {
+      padding: 16px 16px 0;
     }
     .products-header {
       padding-bottom: 16px;
@@ -1274,7 +1250,6 @@ const configData = JSON.stringify({
     }
   }
 
-  /* ══ ANIMATIONS ══ */
   @keyframes fadeIn {
     from {
       opacity: 0;
@@ -1317,7 +1292,6 @@ const configData = JSON.stringify({
 
 <script>
   (() => {
-    /* ── TYPES ── */
     interface Pkg {
       code: string;
       name: string;
@@ -1346,12 +1320,10 @@ const configData = JSON.stringify({
       game: Provider[];
     }
 
-    /* ── CONFIG ── */
     const cfg: Config = JSON.parse(
       document.getElementById("config")!.textContent!,
     );
 
-    /* ── PROVIDER COLOR MAP ── */
     const colorMap: Record<string, string> = {
       "telkomsel-pulsa": "#e53e3e",
       "indosat-pulsa": "#d97706",
@@ -1375,7 +1347,6 @@ const configData = JSON.stringify({
       garena: "#e53e3e",
     };
 
-    /* ── PROVIDER LOGO MAP (gambar SVG, sama seperti page paket data) ── */
     const providerLogos: Record<string, string> = {
       "telkomsel-pulsa": "/logos/telkomsel_logo.svg",
       "indosat-pulsa": "/logos/indosat_logo.svg",
@@ -1445,7 +1416,7 @@ const configData = JSON.stringify({
       plntoken: "PLN",
     };
 
-    /* ── DOM ── */
+    /* ── DOM refs (cached) ── */
     const catBtns =
       document.querySelectorAll<HTMLButtonElement>(".cat-tab-btn");
     const searchInp = document.getElementById(
@@ -1465,12 +1436,11 @@ const configData = JSON.stringify({
     ) as HTMLParagraphElement;
     const ddContainer = document.getElementById(
       "provider-grid",
-    ) as HTMLDivElement; // dropdown wrapper
-    const prodGrid = document.getElementById("products-grid") as HTMLDivElement; // product cards target
+    ) as HTMLDivElement;
+    const prodGrid = document.getElementById("products-grid") as HTMLDivElement;
     const ddTrigger = document.getElementById("dd-trigger") as HTMLDivElement;
     const ddMenu = document.getElementById("dd-menu") as HTMLDivElement;
     const ddValue = document.getElementById("dd-value") as HTMLSpanElement;
-    const subcatBar = document.getElementById("subcat-bar") as HTMLDivElement;
     const stateEmpty = document.getElementById("state-empty") as HTMLDivElement;
     const stateSelProv = document.getElementById(
       "state-select-provider",
@@ -1501,14 +1471,11 @@ const configData = JSON.stringify({
     const mNominal = document.getElementById("m-nominal") as HTMLDivElement;
     const mProduct = document.getElementById("m-product") as HTMLDivElement;
     const mCode = document.getElementById("m-code") as HTMLSpanElement;
-    const mDesc = document.getElementById("m-desc") as HTMLSpanElement;
     const mPrice = document.getElementById("m-price") as HTMLSpanElement;
-    const mWaText = document.getElementById("m-wa-text") as HTMLDivElement;
     const modalDot = document.getElementById(
       "modal-provider-dot",
     ) as HTMLDivElement;
 
-    /* ── STATE ── */
     type CatKey = "pulsa" | "data" | "ewallet" | "token" | "game";
     let activeCat: CatKey = "pulsa";
     let activeProv: string | null = null;
@@ -1517,7 +1484,6 @@ const configData = JSON.stringify({
     let selectedPkg: Pkg | null = null;
     let selectedProv: Provider | null = null;
 
-    /* ── HELPERS ── */
     const fmt = (n: number) => "Rp " + n.toLocaleString("id-ID");
     const show = (el: HTMLElement) => el.classList.remove("hidden");
     const hide = (el: HTMLElement) => el.classList.add("hidden");
@@ -1527,16 +1493,13 @@ const configData = JSON.stringify({
       hide(stateSelProv);
       hide(stateNoRes);
       hide(prodWrap);
-      // provSel TIDAK disembunyikan di sini — dikelola langsung di renderProducts
-      // agar dropdown tidak flicker saat re-render
     }
 
-    /* ── SEARCH LOCK: disable search sampai provider/layanan dipilih ── */
     function setSearchLock(locked: boolean) {
       if (locked) {
         searchInp.parentElement!.classList.add("disabled");
         searchInp.disabled = true;
-        const lockHints: Record<string, string> = {
+        const hints: Record<string, string> = {
           pulsa: "Pilih provider dulu untuk mengaktifkan pencarian",
           data: "Pilih provider dulu",
           ewallet: "Pilih brand e-wallet dulu untuk mengaktifkan pencarian",
@@ -1544,7 +1507,7 @@ const configData = JSON.stringify({
           game: "Pilih game dulu untuk mengaktifkan pencarian",
         };
         searchHint.textContent =
-          lockHints[activeCat] ?? "Pilih dulu untuk mengaktifkan pencarian";
+          hints[activeCat] ?? "Pilih dulu untuk mengaktifkan pencarian";
         searchHint.classList.add("search-hint--locked");
       } else {
         searchInp.parentElement!.classList.remove("disabled");
@@ -1556,91 +1519,76 @@ const configData = JSON.stringify({
       }
     }
 
-    function getProviders(): Provider[] {
-      return (cfg[activeCat] as Provider[]) ?? [];
-    }
+    const getProviders = (): Provider[] => (cfg[activeCat] as Provider[]) ?? [];
+    const isDirectShow = () => activeCat === "token";
 
-    // Token PLN = tampil langsung tanpa pilih provider
-    function isDirectShow(): boolean {
-      return activeCat === "token";
-    }
-
-    // Pulsa, paket data, e-wallet, game = perlu pilih provider/layanan dulu
-    function needsProviderSelect(): boolean {
-      return (
-        activeCat === "pulsa" ||
-        activeCat === "data" ||
-        activeCat === "ewallet" ||
-        activeCat === "game"
-      );
-    }
-
-    function catLabel(): string {
-      const labels: Record<CatKey, string> = {
-        pulsa: "operator",
-        data: "operator",
-        ewallet: "layanan",
-        token: "-",
-        game: "game",
-      };
-      return labels[activeCat];
-    }
-
-    /* ── RENDER PROVIDERS (custom dropdown) ── */
     function renderProviders() {
       const provs = getProviders();
-      const selected = provs.find((p) => p.name === activeProv);
-      ddValue.textContent = selected ? selected.title : "Pilih...";
+      const sel = provs.find((p) => p.name === activeProv);
+      ddValue.textContent = sel ? sel.title : "Pilih...";
       ddContainer.classList.toggle("selected", !!activeProv);
       ddMenu.innerHTML = provs
         .map((p) => {
-          const isActive = p.name === activeProv;
-          return `<div class="dd-option${isActive ? " active" : ""}" data-prov="${p.name}">
-          <span>${p.title}</span>
-          <svg class="dd-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-        </div>`;
+          const a = p.name === activeProv;
+          return `<div class="dd-option${a ? " active" : ""}" data-prov="${p.name}"><span>${p.title}</span><svg class="dd-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>`;
         })
         .join("");
     }
 
-    /* ── TOGGLE DROPDOWN ── */
-    function openDropdown() {
+    const openDropdown = () => {
       ddContainer.classList.add("open");
       ddContainer.setAttribute("aria-expanded", "true");
-    }
-    function closeDropdown() {
+    };
+    const closeDropdown = () => {
       ddContainer.classList.remove("open");
       ddContainer.setAttribute("aria-expanded", "false");
-    }
-    function toggleDropdown() {
+    };
+    const toggleDropdown = () =>
       ddContainer.classList.contains("open") ? closeDropdown() : openDropdown();
-    }
 
-    /* ── BUILD PRODUCT CARD HTML ── */
     function buildCard(pkg: Pkg, delay: number): string {
-      return `
-        <button class="nominal-btn" data-code="${pkg.code}" style="animation-delay:${delay}ms">
-          <div class="nominal-btn__top">
-            <span class="nominal-btn__code">${pkg.code}</span>
-          </div>
-          <div class="nominal-btn__value">${pkg.name}</div>
-          <div class="nominal-btn__desc">${pkg.desc}</div>
-          <div class="nominal-btn__footer">
-            <div>
-              <div class="nominal-btn__price-label">Harga</div>
-              <div class="nominal-btn__price">${fmt(pkg.price)}</div>
-            </div>
-            <div class="nominal-btn__cta">›</div>
-          </div>
-        </button>`;
+      return `<button class="nominal-btn" data-code="${pkg.code}" style="animation-delay:${delay}ms"><div class="nominal-btn__top"><span class="nominal-btn__code">${pkg.code}</span></div><div class="nominal-btn__value">${pkg.name}</div><div class="nominal-btn__desc">${pkg.desc}</div><div class="nominal-btn__footer"><div><div class="nominal-btn__price-label">Harga</div><div class="nominal-btn__price">${fmt(pkg.price)}</div></div><div class="nominal-btn__cta">›</div></div></button>`;
     }
 
-    /* ── RENDER PRODUCTS ── */
+    /* Shared logo renderer — eliminates duplication between token & provider paths */
+    function renderLogo(name: string, fallbackText: string) {
+      const img = document.createElement("img");
+      img.src = providerLogos[name] ?? `/logos/${name}_logo.svg`;
+      img.alt = fallbackText;
+      phLogo.innerHTML = "";
+      phLogo.style.cssText =
+        "background:transparent;border:none;border-radius:0";
+      img.onerror = () => {
+        phLogo.innerHTML = "";
+        phLogo.textContent =
+          providerInitials[name] ?? fallbackText.slice(0, 2).toUpperCase();
+        phLogo.style.cssText = `background:${providerColors[name] ?? "linear-gradient(135deg,#0a0a0a,#333)"};border-radius:14px;border:none`;
+      };
+      phLogo.appendChild(img);
+    }
+
+    function matchQuery(pkg: Pkg, provTitle: string): boolean {
+      const q = query.toLowerCase();
+      return (
+        pkg.name.toLowerCase().includes(q) ||
+        pkg.desc.toLowerCase().includes(q) ||
+        pkg.code.toLowerCase().includes(q) ||
+        String(pkg.price).includes(q) ||
+        provTitle.toLowerCase().includes(q)
+      );
+    }
+
+    function buildOrderUrl(cat: CatKey, provName: string): string {
+      if (cat === "pulsa") return "/products/topup/pulsa";
+      if (cat === "data") return "/products/topup/data";
+      if (cat === "game") return `/products/game/${provName}`;
+      return `/products/topup/${provName}`;
+    }
+
     function renderProducts() {
-      allStatesHide(); // hides all state panels and prodWrap
+      allStatesHide();
       const provs = getProviders();
 
-      /* ══ PATH 1: Token PLN — tampil langsung tanpa provider selector ══ */
       if (isDirectShow()) {
         hide(provSel);
         setSearchLock(false);
@@ -1648,53 +1596,35 @@ const configData = JSON.stringify({
           show(stateEmpty);
           return;
         }
-        let filtered: Array<{ prov: Provider; pkg: Pkg }> = [];
-        for (const prov of provs) {
-          for (const pkg of prov.packages ?? []) {
-            if (!query || matchQuery(pkg, prov.title))
-              filtered.push({ prov, pkg });
-          }
-        }
-        if (!filtered.length) {
+        const flat: Array<{ prov: Provider; pkg: Pkg }> = [];
+        for (const prov of provs)
+          for (const pkg of prov.packages ?? [])
+            if (!query || matchQuery(pkg, prov.title)) flat.push({ prov, pkg });
+        if (!flat.length) {
           stateNoResDesc.textContent = `Tidak ada hasil untuk "${query}"`;
           show(stateNoRes);
           return;
         }
         show(prodWrap);
-        // Logo PLN — langsung append, onerror fallback ke inisial
-        const plnLogoImg = document.createElement("img");
-        plnLogoImg.src = "/logos/plntoken_logo.svg";
-        plnLogoImg.alt = "PLN";
-        phLogo.innerHTML = "";
-        phLogo.style.cssText =
-          "background:transparent;border:none;border-radius:0";
-        plnLogoImg.onerror = () => {
-          phLogo.innerHTML = "";
-          phLogo.textContent = "PLN";
-          phLogo.style.cssText =
-            "background:linear-gradient(135deg,#1e8c4a,#166038);border-radius:14px;border:none";
-        };
-        phLogo.appendChild(plnLogoImg);
+        renderLogo("plntoken", "PLN");
         phTitle.textContent = "Token Listrik PLN";
-        phCount.textContent = `${filtered.length} produk`;
-        let html = '<div class="nominals-grid">';
-        filtered.forEach((item, i) => {
-          html += buildCard(item.pkg, i * 30);
+        phCount.textContent = `${flat.length} produk`;
+        let h = '<div class="nominals-grid">';
+        flat.forEach((item, i) => {
+          h += buildCard(item.pkg, i * 30);
         });
-        html += "</div>";
-        prodGrid.innerHTML = html;
+        prodGrid.innerHTML = h + "</div>";
         return;
       }
 
-      /* ══ PATH 2: Pulsa, Paket Data, E-Wallet, Game — perlu pilih provider ══ */
-      const catDropdownLabels: Record<string, string> = {
+      const dropLabels: Record<string, string> = {
         pulsa: "Provider",
         data: "Provider",
         ewallet: "Brand",
         game: "Game",
         token: "",
       };
-      const catStateTitles: Record<string, string> = {
+      const stateTitles: Record<string, string> = {
         pulsa: "Pilih provider",
         data: "Pilih provider",
         ewallet: "Pilih brand e-wallet",
@@ -1702,11 +1632,9 @@ const configData = JSON.stringify({
         token: "",
       };
       show(provSel);
-      provLabel.textContent = catDropdownLabels[activeCat] ?? "Pilih";
-      stateSelProvTitle.textContent = catStateTitles[activeCat] ?? "Pilih";
+      provLabel.textContent = dropLabels[activeCat] ?? "Pilih";
+      stateSelProvTitle.textContent = stateTitles[activeCat] ?? "Pilih";
       renderProviders();
-
-      // Lock search sampai provider dipilih
       if (!activeProv) {
         setSearchLock(true);
         show(stateSelProv);
@@ -1721,59 +1649,39 @@ const configData = JSON.stringify({
       }
 
       show(prodWrap);
-      // Logo provider — langsung append img, onerror fallback ke inisial berwarna
-      const logoImg = document.createElement("img");
-      logoImg.src = providerLogos[prov.name] ?? `/logos/${prov.name}_logo.svg`;
-      logoImg.alt = prov.title;
-      phLogo.innerHTML = "";
-      phLogo.style.cssText =
-        "background:transparent;border:none;border-radius:0";
-      logoImg.onerror = () => {
-        phLogo.innerHTML = "";
-        phLogo.textContent =
-          providerInitials[prov.name] ?? prov.title.slice(0, 2).toUpperCase();
-        phLogo.style.cssText = `background:${providerColors[prov.name] ?? "linear-gradient(135deg,#0a0a0a,#333)"};border-radius:14px;border:none`;
-      };
-      phLogo.appendChild(logoImg);
+      renderLogo(prov.name, prov.title);
       phTitle.textContent = prov.title;
 
       if (activeCat === "data" && prov.subCategories?.length) {
-        // Paket data: tampilkan semua sub-kategori sekaligus, masing-masing dengan header
-        let totalPkgs = 0;
-        let html = "";
-        let delay = 0;
+        let total = 0,
+          html = "",
+          delay = 0;
         for (const sc of prov.subCategories) {
           const pkgs = query
             ? sc.packages.filter((p) => matchQuery(p, prov.title))
             : sc.packages;
           if (!pkgs.length) continue;
-          totalPkgs += pkgs.length;
-          html += `<div class="subcategory-header">
-            <span class="subcategory-title">${sc.title}</span>
-            <div class="subcategory-line"></div>
-          </div>`;
-          html += '<div class="nominals-grid">';
+          total += pkgs.length;
+          html += `<div class="subcategory-header"><span class="subcategory-title">${sc.title}</span><div class="subcategory-line"></div></div><div class="nominals-grid">`;
           pkgs.forEach((pkg) => {
             html += buildCard(pkg, delay);
             delay += 20;
           });
           html += "</div>";
         }
-        if (!totalPkgs) {
+        if (!total) {
           hide(prodWrap);
           stateNoResDesc.textContent = `Tidak ada hasil untuk "${query}"`;
           show(stateNoRes);
           return;
         }
-        phCount.textContent = `${totalPkgs} produk tersedia`;
+        phCount.textContent = `${total} produk tersedia`;
         prodGrid.innerHTML = html;
       } else {
-        // Kategori lain: flat list
-        const packages = prov.packages ?? [];
-        const filtered = query
-          ? packages.filter((p) => matchQuery(p, prov.title))
-          : packages;
-        if (!filtered.length) {
+        const pkgs = query
+          ? (prov.packages ?? []).filter((p) => matchQuery(p, prov.title))
+          : (prov.packages ?? []);
+        if (!pkgs.length) {
           hide(prodWrap);
           stateNoResDesc.textContent = query
             ? `Tidak ada hasil untuk "${query}" di ${prov.title}`
@@ -1781,59 +1689,24 @@ const configData = JSON.stringify({
           show(stateNoRes);
           return;
         }
-        phCount.textContent = `${filtered.length} produk tersedia`;
-        let html = '<div class="nominals-grid">';
-        filtered.forEach((pkg, i) => {
-          html += buildCard(pkg, i * 30);
+        phCount.textContent = `${pkgs.length} produk tersedia`;
+        let h = '<div class="nominals-grid">';
+        pkgs.forEach((pkg, i) => {
+          h += buildCard(pkg, i * 30);
         });
-        html += "</div>";
-        prodGrid.innerHTML = html;
+        prodGrid.innerHTML = h + "</div>";
       }
     }
 
-    function matchQuery(pkg: Pkg, provTitle: string): boolean {
-      const q = query.toLowerCase();
-      return (
-        pkg.name.toLowerCase().includes(q) ||
-        pkg.desc.toLowerCase().includes(q) ||
-        pkg.code.toLowerCase().includes(q) ||
-        String(pkg.price).includes(q) ||
-        provTitle.toLowerCase().includes(q)
-      );
-    }
-
-    /* ── URL BUILDER untuk tombol "Lihat & Order" ── */
-    function buildOrderUrl(cat: CatKey, provName: string): string {
-      switch (cat) {
-        case "pulsa":
-          return `/products/topup/pulsa`;
-        case "data":
-          return `/products/topup/data`;
-        case "ewallet":
-          return `/products/topup/${provName}`;
-        case "token":
-          return `/products/topup/${provName}`;
-        case "game":
-          return `/products/game/${provName}`;
-        default:
-          return `/products/topup/${provName}`;
-      }
-    }
-
-    /* ── MINI MODAL ── */
     function openModal(pkg: Pkg, prov: Provider) {
       selectedPkg = pkg;
       selectedProv = prov;
-
       mNominal.textContent = pkg.name;
       mProduct.textContent = pkg.desc;
       mCode.textContent = pkg.code;
       mPrice.textContent = fmt(pkg.price);
       modalDot.style.background = colorMap[prov.name] ?? "#0a0a0a";
-
-      // Arahkan tombol "Lihat & Order" ke halaman produk yang sesuai
       btnOrder.setAttribute("href", buildOrderUrl(activeCat, prov.name));
-
       show(modalOverlay);
       document.body.style.overflow = "hidden";
     }
@@ -1841,30 +1714,25 @@ const configData = JSON.stringify({
     function closeModal() {
       hide(modalOverlay);
       document.body.style.overflow = "";
-      selectedPkg = null;
-      selectedProv = null;
+      selectedPkg = selectedProv = null;
     }
 
-    /* sendOrder tidak lagi digunakan — navigasi ditangani langsung oleh <a href> */
-
-    /* ── EVENT DELEGATION: products grid ── */
+    /* Event delegation: grid */
     prodGrid.addEventListener("click", (e) => {
       const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(
         ".nominal-btn",
       );
       if (!btn) return;
       const code = btn.dataset.code!;
-      const provs = getProviders();
-      let foundPkg: Pkg | null = null;
-      let foundProv: Provider | null = null;
-
-      for (const prov of provs) {
+      let foundPkg: Pkg | null = null,
+        foundProv: Provider | null = null;
+      outer: for (const prov of getProviders()) {
         if (prov.packages) {
           const p = prov.packages.find((pk) => pk.code === code);
           if (p) {
             foundPkg = p;
             foundProv = prov;
-            break;
+            break outer;
           }
         }
         if (prov.subCategories) {
@@ -1873,16 +1741,15 @@ const configData = JSON.stringify({
             if (p) {
               foundPkg = p;
               foundProv = prov;
-              break;
+              break outer;
             }
           }
-          if (foundPkg) break;
         }
       }
       if (foundPkg && foundProv) openModal(foundPkg, foundProv);
     });
 
-    /* ── EVENT: category tabs ── */
+    /* Category tabs */
     catBtns.forEach((btn) => {
       btn.addEventListener("click", () => {
         catBtns.forEach((b) => {
@@ -1892,28 +1759,22 @@ const configData = JSON.stringify({
         btn.classList.add("active");
         btn.setAttribute("aria-selected", "true");
         activeCat = btn.dataset.cat as CatKey;
-        activeProv = null;
-        activeSubcat = null;
+        activeProv = activeSubcat = null;
         query = "";
         searchInp.value = "";
         hide(searchClear);
         searchHint.textContent = "";
         if (ddContainer.classList.contains("open")) {
           closeDropdown();
-          // Tunggu animasi close (14ms) sebelum re-render agar tidak glitch
           setTimeout(() => renderProducts(), 15);
-        } else {
-          renderProducts();
-        }
+        } else renderProducts();
       });
     });
 
-    /* ── EVENT: custom dropdown ── */
     ddTrigger.addEventListener("click", (e) => {
       e.stopPropagation();
       toggleDropdown();
     });
-
     ddMenu.addEventListener("click", (e) => {
       const opt = (e.target as HTMLElement).closest<HTMLDivElement>(
         ".dd-option",
@@ -1921,17 +1782,15 @@ const configData = JSON.stringify({
       if (!opt) return;
       activeProv = opt.dataset.prov!;
       activeSubcat = null;
-      // Tutup dulu, baru render setelah animasi close selesai (14ms)
       closeDropdown();
       requestAnimationFrame(() => renderProducts());
     });
-
-    // Tutup dropdown jika klik di luar
     document.addEventListener("click", (e) => {
       if (!ddContainer.contains(e.target as Node)) closeDropdown();
     });
 
-    /* ── EVENT: search ── */
+    /* Search — debounce via rAF */
+    let searchRaf = 0;
     searchInp.addEventListener("input", () => {
       query = searchInp.value.trim();
       if (query) {
@@ -1941,9 +1800,9 @@ const configData = JSON.stringify({
         hide(searchClear);
         searchHint.textContent = "";
       }
-      renderProducts();
+      cancelAnimationFrame(searchRaf);
+      searchRaf = requestAnimationFrame(() => renderProducts());
     });
-
     searchClear.addEventListener("click", () => {
       searchInp.value = "";
       query = "";
@@ -1953,10 +1812,9 @@ const configData = JSON.stringify({
       searchInp.focus();
     });
 
-    /* ── EVENT: modal ── */
+    /* Modal */
     modalClose.addEventListener("click", closeModal);
     btnCancel.addEventListener("click", closeModal);
-    // btnOrder adalah <a> — navigasi terjadi secara natural; tutup modal setelahnya
     btnOrder.addEventListener("click", () => {
       setTimeout(closeModal, 120);
     });
@@ -1967,14 +1825,12 @@ const configData = JSON.stringify({
       if (e.key === "Escape") closeModal();
     });
 
-    /* ── INIT: baca ?tab= dari URL dan aktifkan tab yang sesuai ── */
-    (function () {
-      const params = new URLSearchParams(window.location.search);
-      const tabParam = params.get("tab");
-      const validTabs = ["pulsa", "data", "ewallet", "token", "game"];
-      if (tabParam && validTabs.includes(tabParam)) {
+    /* Init: ?tab= URL param */
+    (() => {
+      const tab = new URLSearchParams(window.location.search).get("tab");
+      if (tab && ["pulsa", "data", "ewallet", "token", "game"].includes(tab)) {
         const targetBtn = Array.from(catBtns).find(
-          (b) => b.dataset.cat === tabParam,
+          (b) => b.dataset.cat === tab,
         );
         if (targetBtn && !targetBtn.classList.contains("active")) {
           catBtns.forEach((b) => {
@@ -1983,32 +1839,47 @@ const configData = JSON.stringify({
           });
           targetBtn.classList.add("active");
           targetBtn.setAttribute("aria-selected", "true");
-          activeCat = tabParam as CatKey;
-          activeProv = null;
-          activeSubcat = null;
+          activeCat = tab as CatKey;
+          activeProv = activeSubcat = null;
         }
       }
     })();
 
     renderProducts();
 
-    /* ── FLOATING WA BUTTON: collapse on scroll ── */
+    /* Floating WA: collapse on scroll — rAF throttle + will-change cleanup */
     const wrapEl = document.getElementById("wa-fab-wrap") as HTMLElement;
-    let collapsed = false;
-    window.addEventListener(
-      "scroll",
-      () => {
-        if (window.innerWidth <= 480) return;
-        const y = window.scrollY;
-        if (y > 80 && !collapsed) {
-          collapsed = true;
-          wrapEl.classList.add("collapsed");
-        } else if (y <= 80 && collapsed) {
-          collapsed = false;
-          wrapEl.classList.remove("collapsed");
-        }
-      },
-      { passive: true },
-    );
+    if (wrapEl) {
+      wrapEl.addEventListener(
+        "animationend",
+        () => {
+          wrapEl.style.willChange = "auto";
+        },
+        { once: true },
+      );
+      if (window.innerWidth > 480) {
+        let collapsed = false,
+          rafPending = false;
+        window.addEventListener(
+          "scroll",
+          () => {
+            if (rafPending) return;
+            rafPending = true;
+            requestAnimationFrame(() => {
+              rafPending = false;
+              const y = window.scrollY;
+              if (y > 80 && !collapsed) {
+                collapsed = true;
+                wrapEl.classList.add("collapsed");
+              } else if (y <= 80 && collapsed) {
+                collapsed = false;
+                wrapEl.classList.remove("collapsed");
+              }
+            });
+          },
+          { passive: true },
+        );
+      }
+    }
   })();
 </script>
