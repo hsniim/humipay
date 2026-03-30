@@ -11,6 +11,7 @@
 //   /products/bill/pulsapasca  → Pulsa Pascabayar
 
 import Navbar from "../../../../components/Navbar.astro";
+import Footer from "../../../../components/Footer.astro";
 import BaseLayout from "../../../../layouts/BaseLayout.astro";
 import { tagihanProducts } from "../../../../data/products.js";
 
@@ -309,6 +310,7 @@ const configData = JSON.stringify({
         </div>
       </section>
     </main>
+    <Footer />
   </div>
 
   <script id="config" type="application/json" set:html={configData} />
@@ -501,6 +503,8 @@ const configData = JSON.stringify({
     align-items: center;
     justify-content: center;
     contain: layout style;
+    content-visibility: auto;
+    contain-intrinsic-size: 0 240px;
   }
   /* Saat cs-card aktif, hilangkan background/border container luar */
   .products-section:has(#cs-card:not(.hidden)) {
@@ -934,6 +938,7 @@ const configData = JSON.stringify({
     animation: fabIn 0.5s 1.5s cubic-bezier(0.16, 1, 0.3, 1) both;
     touch-action: none;
     user-select: none;
+    will-change: transform;
   }
   .wa-fab {
     display: flex;
@@ -1058,11 +1063,6 @@ const configData = JSON.stringify({
   @media (max-width: 640px) {
     main {
       padding: 20px 12px 80px;
-    }
-  }
-  @media (max-width: 600px) {
-    main {
-      padding: 28px 16px 80px;
       gap: 12px;
     }
     .input-section {
@@ -1217,33 +1217,6 @@ const configData = JSON.stringify({
   }
 
   /* ── Warna card kontekstual (dioverride via JS class) ── */
-  /* Default = WA (hijau) */
-  .cs-card__inner {
-    border-color: #bbf7d0;
-  }
-  .cs-card__header {
-    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-    border-bottom-color: #bbf7d0;
-  }
-  .cs-tab-bar {
-    border-bottom-color: #bbf7d0;
-  }
-  .cs-card__icon-wrap {
-    background: #25d366;
-    box-shadow: 0 3px 10px rgba(37, 211, 102, 0.4);
-  }
-  .cs-wa-preview {
-    border-color: #d4f0d8;
-    background: #f0faf1;
-  }
-  .cs-wa-preview__header {
-    background: #e4f7e6;
-    border-bottom-color: #d4f0d8;
-    color: #2d7a3a;
-  }
-  .cs-wa-preview__bubble {
-    color: #1a3a1f;
-  }
   /* Telegram override */
   .cs-card__inner.cs-channel--tg {
     border-color: #bae6fd;
@@ -1463,23 +1436,21 @@ const configData = JSON.stringify({
 
     function renderPreview() {
       csWaPreviewText.textContent = currentMsg;
-      btnCsChannel.onclick = () => {
-        if (activeChannel === "wa") {
-          window.open(
-            `https://wa.me/${waNumber}?text=${encodeURIComponent(currentMsg)}`,
-            "_blank",
-          );
-        } else {
-          window.open(
-            `https://t.me/${tgUsername}?text=${encodeURIComponent(currentMsg)}`,
-            "_blank",
-          );
-        }
-      };
     }
 
-    tabWa.addEventListener("click", () => setChannel("wa"));
-    tabTg.addEventListener("click", () => setChannel("tg"));
+    function openChannel() {
+      const msg = encodeURIComponent(currentMsg);
+      window.open(
+        activeChannel === "wa"
+          ? `https://wa.me/${waNumber}?text=${msg}`
+          : `https://t.me/${tgUsername}?text=${msg}`,
+        "_blank",
+      );
+    }
+    btnCsChannel.addEventListener("click", openChannel);
+
+    tabWa.addEventListener("click", () => setChannel("wa"), { passive: true });
+    tabTg.addEventListener("click", () => setChannel("tg"), { passive: true });
 
     // ── HELPERS ─────────────────────────────────────────────────────────────
     function normalizePhone(val: string) {
@@ -1740,97 +1711,100 @@ const configData = JSON.stringify({
       if (e.key === "Enter" && !btnCek.disabled) cekTagihan();
     });
     btnCek.addEventListener("click", cekTagihan);
-  })();
-</script>
 
-<script>
-  /* ── FAB drag + collapse — identik dengan topup ── */
-  (function () {
-    const wrap = document.getElementById("wa-fab-wrap") as HTMLElement;
-    if (!wrap) return;
-    let isDragging = false,
-      didDrag = false;
-    let startX = 0,
-      startY = 0,
-      origLeft = 0,
-      origTop = 0,
-      collapsed = false;
+    // ── FAB drag + collapse ───────────────────────────────────────────────────
+    const wrap = document.getElementById("wa-fab-wrap") as HTMLElement | null;
+    if (wrap) {
+      let isDragging = false,
+        didDrag = false;
+      let startX = 0,
+        startY = 0,
+        origLeft = 0,
+        origTop = 0,
+        fabCollapsed = false;
 
-    window.addEventListener(
-      "scroll",
-      () => {
-        if (window.innerWidth <= 480) return;
-        const y = window.scrollY;
-        if (y > 80 && !collapsed) {
-          collapsed = true;
-          wrap.classList.add("collapsed");
-        } else if (y <= 80 && collapsed) {
-          collapsed = false;
-          wrap.classList.remove("collapsed");
-        }
-      },
-      { passive: true },
-    );
+      window.addEventListener(
+        "scroll",
+        () => {
+          if (window.innerWidth <= 480) return;
+          const y = window.scrollY;
+          if (y > 80 && !fabCollapsed) {
+            fabCollapsed = true;
+            wrap.classList.add("collapsed");
+          } else if (y <= 80 && fabCollapsed) {
+            fabCollapsed = false;
+            wrap.classList.remove("collapsed");
+          }
+        },
+        { passive: true },
+      );
 
-    function startDrag(cx: number, cy: number) {
-      isDragging = true;
-      didDrag = false;
-      const r = wrap.getBoundingClientRect();
-      origLeft = r.left;
-      origTop = r.top;
-      startX = cx;
-      startY = cy;
-      wrap.style.right = "auto";
-      wrap.style.bottom = "auto";
-      wrap.style.left = origLeft + "px";
-      wrap.style.top = origTop + "px";
-      wrap.classList.add("dragging");
+      function startDrag(cx: number, cy: number) {
+        isDragging = true;
+        didDrag = false;
+        const r = wrap!.getBoundingClientRect();
+        origLeft = r.left;
+        origTop = r.top;
+        startX = cx;
+        startY = cy;
+        wrap!.style.right = "auto";
+        wrap!.style.bottom = "auto";
+        wrap!.style.left = origLeft + "px";
+        wrap!.style.top = origTop + "px";
+        wrap!.classList.add("dragging");
+      }
+      function moveDrag(cx: number, cy: number) {
+        if (!isDragging) return;
+        const dx = cx - startX,
+          dy = cy - startY;
+        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) didDrag = true;
+        wrap!.style.left =
+          Math.max(
+            8,
+            Math.min(window.innerWidth - wrap!.offsetWidth - 8, origLeft + dx),
+          ) + "px";
+        wrap!.style.top =
+          Math.max(
+            8,
+            Math.min(window.innerHeight - wrap!.offsetHeight - 8, origTop + dy),
+          ) + "px";
+      }
+      function endDrag(e: Event) {
+        if (!isDragging) return;
+        isDragging = false;
+        wrap!.classList.remove("dragging");
+        if (!didDrag) return;
+        const r = wrap!.getBoundingClientRect();
+        wrap!.style.left = "auto";
+        wrap!.style.right = "auto";
+        wrap!.style.top = r.top + "px";
+        wrap!.style.bottom = "auto";
+        wrap!.style[
+          r.left + r.width / 2 < window.innerWidth / 2 ? "left" : "right"
+        ] = "20px";
+        e.preventDefault();
+      }
+
+      wrap.addEventListener("mousedown", (e) =>
+        startDrag(e.clientX, e.clientY),
+      );
+      window.addEventListener(
+        "mousemove",
+        (e) => moveDrag(e.clientX, e.clientY),
+        { passive: true },
+      );
+      window.addEventListener("mouseup", endDrag);
+      wrap.addEventListener(
+        "touchstart",
+        (e) => startDrag(e.touches[0].clientX, e.touches[0].clientY),
+        { passive: true },
+      );
+      window.addEventListener(
+        "touchmove",
+        (e) => moveDrag(e.touches[0].clientX, e.touches[0].clientY),
+        { passive: true },
+      );
+      window.addEventListener("touchend", endDrag);
     }
-    function moveDrag(cx: number, cy: number) {
-      if (!isDragging) return;
-      const dx = cx - startX,
-        dy = cy - startY;
-      if (Math.abs(dx) > 3 || Math.abs(dy) > 3) didDrag = true;
-      wrap.style.left =
-        Math.max(
-          8,
-          Math.min(window.innerWidth - wrap.offsetWidth - 8, origLeft + dx),
-        ) + "px";
-      wrap.style.top =
-        Math.max(
-          8,
-          Math.min(window.innerHeight - wrap.offsetHeight - 8, origTop + dy),
-        ) + "px";
-    }
-    function endDrag(e: Event) {
-      if (!isDragging) return;
-      isDragging = false;
-      wrap.classList.remove("dragging");
-      if (!didDrag) return;
-      const r = wrap.getBoundingClientRect();
-      wrap.style.left = "auto";
-      wrap.style.right = "auto";
-      wrap.style.top = r.top + "px";
-      wrap.style.bottom = "auto";
-      wrap.style[
-        r.left + r.width / 2 < window.innerWidth / 2 ? "left" : "right"
-      ] = "20px";
-      e.preventDefault();
-    }
-
-    wrap.addEventListener("mousedown", (e) => startDrag(e.clientX, e.clientY));
-    window.addEventListener("mousemove", (e) => moveDrag(e.clientX, e.clientY));
-    window.addEventListener("mouseup", endDrag);
-    wrap.addEventListener(
-      "touchstart",
-      (e) => startDrag(e.touches[0].clientX, e.touches[0].clientY),
-      { passive: true },
-    );
-    window.addEventListener(
-      "touchmove",
-      (e) => moveDrag(e.touches[0].clientX, e.touches[0].clientY),
-      { passive: true },
-    );
-    window.addEventListener("touchend", endDrag);
   })();
 </script>
